@@ -14,6 +14,7 @@ class MPU6050Driver : public rclcpp::Node {
   std::unique_ptr<MPU6050Sensor> mpu6050_;
   size_t count_;
   rclcpp::TimerBase::SharedPtr timer_;
+  static constexpr double CONVERT_DEGREE_TO_RADIAN = 0.017453;
   void handleInput();
   void declareParameters();
 };

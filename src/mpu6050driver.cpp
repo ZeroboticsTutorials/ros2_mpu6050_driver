@@ -31,7 +31,7 @@ MPU6050Driver::MPU6050Driver()
   mpu6050_->printConfig();
   mpu6050_->printOffsets();
   // Create publisher
-  publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("imu", 10);
+  publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 10);
   std::chrono::duration<int64_t, std::milli> frequency =
       1000ms / this->get_parameter("gyro_range").as_int();
   timer_ = this->create_wall_timer(frequency, std::bind(&MPU6050Driver::handleInput, this));
@@ -47,9 +47,9 @@ void MPU6050Driver::handleInput()
   message.linear_acceleration.y = mpu6050_->getAccelerationY();
   message.linear_acceleration.z = mpu6050_->getAccelerationZ();
   message.angular_velocity_covariance[0] = {0};
-  message.angular_velocity.x = mpu6050_->getAngularVelocityX();
-  message.angular_velocity.y = mpu6050_->getAngularVelocityY();
-  message.angular_velocity.z = mpu6050_->getAngularVelocityZ();
+  message.angular_velocity.x = mpu6050_->getAngularVelocityX() * CONVERT_DEGREE_TO_RADIAN;
+  message.angular_velocity.y = mpu6050_->getAngularVelocityY() * CONVERT_DEGREE_TO_RADIAN;
+  message.angular_velocity.z = mpu6050_->getAngularVelocityZ() * CONVERT_DEGREE_TO_RADIAN;
   // Invalidate quaternion
   message.orientation_covariance[0] = -1;
   message.orientation.x = 0;
